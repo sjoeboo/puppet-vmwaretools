@@ -16,147 +16,28 @@
 # Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools::params {
-  # If we have a top scope variable defined, use it, otherwise fall back to a
-  # hardcoded value.
-  $reposerver = $::vmwaretools_reposerver ? {
-    undef   => 'http://packages.vmware.com',
-    default => $::vmwaretools_reposerver,
-  }
-
-  $repopath = $::vmwaretools_repopath ? {
-    undef   => '/tools',
-    default => $::vmwaretools_repopath,
-  }
-
-  $repopriority = $::vmwaretools_repopriority ? {
-    undef   => '50',
-    default => $::vmwaretools_repopriority,
-  }
-
-  $repoprotect = $::vmwaretools_repoprotect ? {
-    undef   => '0',
-    default => $::vmwaretools_repoprotect,
-  }
-
-  $gpgkey_url = $::vmwaretools_gpgkey_url ? {
-    undef   => "${reposerver}${repopath}/",
-    default => $::vmwaretools_gpgkey_url,
-  }
-
-  $proxy = $::vmwaretools_proxy ? {
-    undef   => 'absent',
-    default => $::vmwaretools_proxy,
-  }
-
-  $proxy_username = $::vmwaretools_proxy_username ? {
-    undef   => 'absent',
-    default => $::vmwaretools_proxy_username,
-  }
-
-  $proxy_password = $::vmwaretools_proxy_password ? {
-    undef   => 'absent',
-    default => $::vmwaretools_proxy_password,
-  }
-
-  $tools_version = $::vmwaretools_tools_version ? {
-    undef   => 'latest',
-    default => $::vmwaretools_tools_version,
-  }
-  # Validate that tools version starts with a numeral.
-  #validate_re($tools_version, '^[^3-9]\.[0-9]*')
-
-  $ensure = $::vmwaretools_ensure ? {
-    undef   => 'present',
-    default => $::vmwaretools_ensure,
-  }
-
-  $package = $::vmwaretools_package ? {
-    undef   => undef,
-    default => $::vmwaretools_package,
-  }
-
-  $service_ensure = $::vmwaretools_service_ensure ? {
-    undef   => 'running',
-    default => $::vmwaretools_service_ensure,
-  }
-
-  $service_name = $::vmwaretools_service_name ? {
-    undef   => undef,
-    default => $::vmwaretools_service_name,
-  }
-
-  $service_hasstatus = $::vmwaretools_service_hasstatus ? {
-    undef   => undef,
-    default => $::vmwaretools_service_hasstatus,
-  }
-
-  # Since the top scope variable could be a string (if from an ENC), we might
-  # need to convert it to a boolean.
-  $just_prepend_repopath = $::just_prepend_repopath ? {
-    undef   => false,
-    default => $::vmwaretools_just_prepend_repopath,
-  }
-  if is_string($just_prepend_repopath) {
-    $safe_just_prepend_repopath = str2bool($just_prepend_repopath)
-  } else {
-    $safe_just_prepend_repopath = $just_prepend_repopath
-  }
-
-  $manage_repository = $::manage_repository ? {
-    undef   => true,
-    default => $::vmwaretools_manage_repository,
-  }
-  if is_string($manage_repository) {
-    $safe_manage_repository = str2bool($manage_repository)
-  } else {
-    $safe_manage_repository = $manage_repository
-  }
-
-  $disable_tools_version = $::vmwaretools_disable_tools_version ? {
-    undef   => true,
-    default => $::vmwaretools_disable_tools_version,
-  }
-  if is_string($disable_tools_version) {
-    $safe_disable_tools_version = str2bool($disable_tools_version)
-  } else {
-    $safe_disable_tools_version = $disable_tools_version
-  }
-
-  $autoupgrade = $::vmwaretools_autoupgrade ? {
-    undef   => false,
-    default => $::vmwaretools_autoupgrade,
-  }
-  if is_string($autoupgrade) {
-    $safe_autoupgrade = str2bool($autoupgrade)
-  } else {
-    $safe_autoupgrade = $autoupgrade
-  }
-
-  $service_enable = $::vmwaretools_service_enable ? {
-    undef   => true,
-    default => $::vmwaretools_service_enable,
-  }
-  if is_string($service_enable) {
-    $safe_service_enable = str2bool($service_enable)
-  } else {
-    $safe_service_enable = $service_enable
-  }
-
-  $service_hasrestart = $::vmwaretools_service_hasrestart ? {
-    undef   => true,
-    default => $::vmwaretools_service_hasrestart,
-  }
-  if is_string($service_hasrestart) {
-    $safe_service_hasrestart = str2bool($service_hasrestart)
-  } else {
-    $safe_service_hasrestart = $service_hasrestart
-  }
-
-  $scsi_timeout = $::vmwaretools_scsi_timeout ? {
-    undef   => '180',
-    default => $::vmwaretools_scsi_timeout,
-  }
-
+  $reposerver = 'http://packages.vmware.com'
+  $repopath = '/tools'
+  $repopriority = '50'
+  $repoprotect ='0'
+  $gpgkey_url ="${reposerver}${repopath}/"
+  $proxy = 'absent'
+  $proxy_username = 'absent'
+  $proxy_password = 'absent'
+  $tools_version ='latest'
+  $ensure = 'present'
+  $package = undef
+  $service_ensure = 'running'
+  $service_name =undef
+  $service_hasstatus = undef
+  $just_prepend_repopath = false
+  $manage_repository = true
+  $disable_tools_version = true
+  $autoupgrade = false
+  $service_enable = true
+  $service_hasrestart =true
+  $scsi_timeout ='180'
+  
   if $::operatingsystemmajrelease { # facter 1.7+
     $majdistrelease = $::operatingsystemmajrelease
   } elsif $::lsbmajdistrelease {    # requires LSB to already be installed

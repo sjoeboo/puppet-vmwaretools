@@ -132,27 +132,27 @@
 # Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools (
-  $tools_version         = $vmwaretools::params::tools_version,
-  $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
-  $manage_repository     = $vmwaretools::params::safe_manage_repository,
-  $reposerver            = $vmwaretools::params::reposerver,
-  $repopath              = $vmwaretools::params::repopath,
-  $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
-  $priority              = $vmwaretools::params::repopriority,
-  $protect               = $vmwaretools::params::repoprotect,
-  $gpgkey_url            = $vmwaretools::params::gpgkey_url,
-  $proxy                 = $vmwaretools::params::proxy,
-  $proxy_username        = $vmwaretools::params::proxy_username,
-  $proxy_password        = $vmwaretools::params::proxy_password,
-  $ensure                = $vmwaretools::params::ensure,
-  $autoupgrade           = $vmwaretools::params::safe_autoupgrade,
-  $package               = $vmwaretools::params::package,
-  $service_ensure        = $vmwaretools::params::service_ensure,
-  $service_name          = $vmwaretools::params::service_name,
-  $service_enable        = $vmwaretools::params::safe_service_enable,
-  $service_hasstatus     = $vmwaretools::params::service_hasstatus,
-  $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart,
-  $scsi_timeout          = $vmwaretools::params::scsi_timeout,
+  String $tools_version                 = $vmwaretools::params::tools_version,
+  Boolean $disable_tools_version        = $vmwaretools::params::disable_tools_version,
+  Boolean $manage_repository            = $vmwaretools::params::manage_repository,
+  String $reposerver                    = $vmwaretools::params::reposerver,
+  String $repopath                      = $vmwaretools::params::repopath,
+  Boolean $just_prepend_repopath        = $vmwaretools::params::just_prepend_repopath,
+  String $priority                      = $vmwaretools::params::repopriority,
+  String $protect                       = $vmwaretools::params::repoprotect,
+  String $gpgkey_url                    = $vmwaretools::params::gpgkey_url,
+  String $proxy                         = $vmwaretools::params::proxy,
+  String $proxy_username                = $vmwaretools::params::proxy_username,
+  String $proxy_password                = $vmwaretools::params::proxy_password,
+  String $ensure                        = $vmwaretools::params::ensure,
+  Boolean $autoupgrade                  = $vmwaretools::params::autoupgrade,
+  Optional[String] $package             = $vmwaretools::params::package,
+  String $service_ensure                = $vmwaretools::params::service_ensure,
+  Optional[String] $service_name        = $vmwaretools::params::service_name,
+  Boolean $service_enable               = $vmwaretools::params::service_enable,
+  Optional[String] $service_hasstatus   = $vmwaretools::params::service_hasstatus,
+  Optional[String] $service_hasrestart  = $vmwaretools::params::ervice_hasrestart,
+  String $scsi_timeout                  = $vmwaretools::params::scsi_timeout,
 
   # Deprecated parameters
   $yum_server            = undef,
@@ -161,15 +161,6 @@ class vmwaretools (
 ) inherits vmwaretools::params {
 
   $supported = $vmwaretools::params::supported
-
-  # Validate our booleans
-  validate_bool($manage_repository)
-  validate_bool($disable_tools_version)
-  validate_bool($just_prepend_repopath)
-  validate_bool($autoupgrade)
-  validate_bool($service_enable)
-  validate_bool($service_hasrestart)
-  validate_bool($supported)
 
   case $ensure {
     /(present)/: {
@@ -305,7 +296,7 @@ class vmwaretools (
         }
 
         file { '/etc/udev/rules.d/99-vmware-scsi-udev.rules':
-          ensure  => present,
+          #ensure  => present,
           content => template('vmwaretools/udev-rules.erb'),
           require => Package[$package_real],
           notify  => Exec['udevrefresh'],
@@ -323,12 +314,13 @@ class vmwaretools (
           }
         }
 
+        $line_contents = $disable_tools_version ? {
+          false   => 'disable-tools-version = "false"',
+          default => 'disable-tools-version = "true"',
+        }
         file_line { 'disable-tools-version':
           path    => '/etc/vmware-tools/tools.conf',
-          line    => $disable_tools_version ? {
-            false   => 'disable-tools-version = "false"',
-            default => 'disable-tools-version = "true"',
-          },
+          line    => $line_contents,
           match   => '^disable-tools-version\s*=.*$',
           require => Package[$package_real],
           notify  => Service[$service_name_real],
