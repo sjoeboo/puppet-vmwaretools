@@ -151,7 +151,7 @@ class vmwaretools (
   Optional[String] $service_name        = $vmwaretools::params::service_name,
   Boolean $service_enable               = $vmwaretools::params::service_enable,
   Optional[String] $service_hasstatus   = $vmwaretools::params::service_hasstatus,
-  Optional[String] $service_hasrestart  = $vmwaretools::params::ervice_hasrestart,
+  Optional[String] $service_hasrestart  = $vmwaretools::params::service_hasrestart,
   String $scsi_timeout                  = $vmwaretools::params::scsi_timeout,
 
   # Deprecated parameters
