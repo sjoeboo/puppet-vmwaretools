@@ -24,7 +24,7 @@ class vmwaretools::params {
   $proxy = 'absent'
   $proxy_username = 'absent'
   $proxy_password = 'absent'
-  $tools_version ='latest'
+  $tools_version = '10.0.0'
   $ensure = 'present'
   $package = undef
   $service_ensure = 'running'
